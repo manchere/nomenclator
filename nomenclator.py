@@ -4,7 +4,9 @@ from datetime import datetime
 
 counter = 0
 def countRename():
+	global counter
 	counter += 1
+	cmds.text(counting, edit=True, label = str(counter) + ' name(s) affected')
 	return counter
 
 def listSelectionByType(**kwargs):
@@ -26,12 +28,14 @@ def setPrefix(listOfNames):
 				continue
 		else:
 			cmds.rename(cur_name, pre + cur_name)
-			countRename()				
+			countRename()
+	global counter
+	counter = 0				
 
 def setSuffix(listOfNames):
 	suf = cmds.textFieldGrp('suffix', q = True, text = True)
 	for cur_name in listOfNames:
-		if cur_name.endswith(suf):
+		if cur_name.endswith(suf) and suf != '':
 			result = cmds.confirmDialog(title='Warning !', message='Suffix '+ str(suf) + ' already exists for '+ cur_name +', continue?', button=['Yes', 'No'], defaultButton='Yes', cancelButton='No', dismissString='No')
 			if result == 'Yes':
 				cmds.rename(cur_name,cur_name + suf)
@@ -41,6 +45,8 @@ def setSuffix(listOfNames):
 		else:
 			cmds.rename(cur_name, cur_name + suf)
 			countRename()
+	global counter
+	counter = 0
 
 def setName(prefix, suffix):
 	name = cmds.textFieldGrp('name', q = True, text = True)
@@ -51,6 +57,8 @@ def setName(prefix, suffix):
 		elif cur_name.endswith(suffix):
 			cmds.rename(cur_name, name)		
 			countRename()
+	global counter
+	counter = 0
 					
 def setDateFormat(listOfNames):
 	dateF = cmds.textFieldGrp('', q = True, text = True)
@@ -80,7 +88,7 @@ def make_optmenu(optMenName, optMenLbl, menuItems):
 cmds.window(title= 'Nomenclator')
 
 cmds.columnLayout(adjustableColumn = True)
-cmds.text(str(counter) + ' name(s) affected')
+counting = cmds.text(str(counter) + ' name(s) affected')
 
 cmds.separator(height = 5)
 make_optmenu('optType', 'Rename by Type:', ['all', 'mesh', 'joint', 'light', 'layer'])
