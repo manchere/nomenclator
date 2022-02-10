@@ -15,6 +15,13 @@ def listSelectionByType(**kwargs):
 def listSelection():
 	return cmds.ls(sl=True)
 
+def setName(listOfNames):
+	newName = cmds.textFieldGrp('name', q = True, text = True)
+	for cur_name in listOfNames:
+		cmds.rename(cur_name, newName)
+	global counter
+	counter = 0
+
 def setPrefix(listOfNames):
 	pre = cmds.textFieldGrp('prefix', q = True, text = True)
 	print("text is"+pre)
@@ -44,18 +51,6 @@ def setSuffix(listOfNames):
 				continue
 		else:
 			cmds.rename(cur_name, cur_name + suf)
-			countRename()
-	global counter
-	counter = 0
-
-def setName(prefix, suffix):
-	name = cmds.textFieldGrp('name', q = True, text = True)
-	for cur_name in listOfNames:
-		if cur_name.startswith(prefix):
-			cmds.rename(cur_name, name)
-			countRename()
-		elif cur_name.endswith(suffix):
-			cmds.rename(cur_name, name)		
 			countRename()
 	global counter
 	counter = 0
@@ -96,14 +91,13 @@ make_optmenu('optType', 'Rename by Type:', ['all', 'mesh', 'joint', 'light', 'la
 cmds.separator(height = 5)
 cmds.gridLayout(numberOfColumns=3, cellWidthHeight=(100, 25))
 
+cmds.text(label='NAME :')
+name = cmds.textFieldGrp('name', editable=True)
+cmds.button(label="APPLY", bgc=[0,0,0], command = lambda x : setName(listSelection()))
+
 cmds.text(label='PREFIX :', bgc=[0,0.5,0])
 cmds.textFieldGrp('prefix', editable=True)
 cmds.button(label="APPLY", bgc=[0,0,0], command = lambda x : setPrefix(listSelection()))
-
-
-cmds.text(label='NAME :')
-name = cmds.textFieldGrp('name', editable=True)
-cmds.button(label="APPLY", bgc=[0,0,0])
 
 
 cmds.text(label='SUFFIX :', bgc=[0.5,0,0])
