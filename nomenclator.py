@@ -1,6 +1,7 @@
 import maya.cmds as cmds
 from functools import partial
 from datetime import datetime
+from string import digits
 
 counter = 0
 suffix = ''
@@ -29,16 +30,10 @@ def setObjectType():
 		return cmds.ls(sl = True)
 	else:
 		return listSelectionByType(the_type)
-		
-cmds.ls(sl = True, mat = True)
-the_type = cmds.optionMenu('optType', q = True, v = True)
-print(the_type)
 
-	
 def listSelectionByType(args):
 	if args in ['joint', 'mesh', 'transform']:
 		return cmds.ls(sl = True, type = args)
-		print('type')
 	elif args == 'camera':
 		return cmds.ls(sl = True, cameras = True)
 	elif args == 'texture':
@@ -60,7 +55,6 @@ def setName(listOfNames):
 
 def setPrefix(listOfNames):
 	pre = cmds.textFieldGrp('prefix', q = True, text = True)
-	print("text is"+pre)
 	for cur_name in listOfNames:
 		if cur_name.startswith(pre) and pre != '':
 			result = cmds.confirmDialog(title='Warning !', message='Prefix '+ str(pre) + ' already exists for '+ cur_name +', continue?', button=['Yes', 'No'], defaultButton='Yes', cancelButton='No', dismissString='No')
@@ -73,7 +67,8 @@ def setPrefix(listOfNames):
 			cmds.rename(cur_name, pre + cur_name)
 			countRename()
 	global counter
-	counter = 0				
+	counter = 0
+				
 
 def setSuffix(listOfNames):
 	suf = cmds.textFieldGrp('suffix', q = True, text = True)
@@ -81,15 +76,23 @@ def setSuffix(listOfNames):
 		if cur_name.endswith(suf) and suf != '':
 			result = cmds.confirmDialog(title='Warning !', message='Suffix '+ str(suf) + ' already exists for '+ cur_name +', continue?', button=['Yes', 'No'], defaultButton='Yes', cancelButton='No', dismissString='No')
 			if result == 'Yes':
-				cmds.rename(cur_name,cur_name + suf)
+				sufName(cur_name, suf)
 				countRename()
 			elif result == 'No':
 				continue
 		else:
-			cmds.rename(cur_name, cur_name + suf)
+			sufName(cur_name, suf)
 			countRename()
 	global counter
 	counter = 0
+	
+def sufName(cur_name, suf):
+	checked = cmds.checkBox('SufBeforeInc', q = True, v = True)
+	incType = len(increment())
+	if checked:
+		return cmds.rename(cur_name, cur_name.rstrip(digits) + suf + increment())	
+	else:
+		return cmds.rename(cur_name, cur_name + suf)
 					
 def setDateFormat(listOfNames):
 	now = datetime.now()
@@ -109,6 +112,13 @@ def make_optmenu(optMenName, optMenLbl, menuItems):
     for item in menuItems:
         cmds.menuItem(item)	
 
+def validate():
+	setName(setObjectType())
+	setPrefix(listSelection())
+	setSuffix(listSelection())
+	setDateFormat(listSelection())
+	
+	
 if (cmds.window('Nomenclator', exists = True)): 
     cmds.deleteUI('Nomenclator')
     
@@ -122,6 +132,9 @@ make_optmenu('optType', 'Rename by Type:', ['all', 'transform', 'mesh', 'joint',
 
 cmds.separator(height = 5)
 make_optmenu('optIncrement', 'Increment Type:', ['maya default','1, 2, 3', '01, 02, 03', '001, 002, 003'])
+
+cmds.separator(height = 5)
+cmds.checkBox('SufBeforeInc',label = 'Suffix before increment')
 
 cmds.separator(height = 5)
 cmds.gridLayout(numberOfColumns=3, cellWidthHeight=(100, 25))
@@ -145,7 +158,7 @@ make_optmenu('optDate', '', ['date', 'date & time'])
 cmds.button(label='APPLY', bgc=[0,0,0], command = lambda x : setDateFormat(listSelection()))
 
 cmds.separator(height=10, style='double')
-cmds.button(label='VALIDATE',bgc=[1,0,0])
+cmds.button(label='VALIDATE', bgc=[1,0,0], command = 'validate()')
 cmds.separator(height=10, style='double')
 
 cmds.columnLayout(adjustableColumn = True)
