@@ -154,7 +154,7 @@ cmds.button(label="APPLY", bgc=[0,0,0], command = lambda x : setSuffix(listSelec
 
 
 cmds.text(label='DATE FORMAT :', bgc=[1,1,1])
-make_optmenu('optDate', '', ['date', 'date & time'])
+make_optmenu('optDate', '', ['none','date', 'date & time'])
 cmds.button(label='APPLY', bgc=[0,0,0], command = lambda x : setDateFormat(listSelection()))
 
 cmds.separator(height=10, style='double')
@@ -164,5 +164,3 @@ cmds.separator(height=10, style='double')
 cmds.columnLayout(adjustableColumn = True)
 
 cmds.showWindow()
-
-
