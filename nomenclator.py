@@ -114,9 +114,9 @@ def make_optmenu(optMenName, optMenLbl, menuItems):
 
 def validate():
 	setName(setObjectType())
-	setPrefix(listSelection())
-	setSuffix(listSelection())
-	setDateFormat(listSelection())
+	setPrefix(setObjectType())
+	setSuffix(setObjectType())
+	setDateFormat(setObjectType())
 	
 	
 if (cmds.window('Nomenclator', exists = True)): 
@@ -145,17 +145,17 @@ cmds.button(label="APPLY", bgc=[0,0,0], command = lambda x : setName(setObjectTy
 
 cmds.text(label='PREFIX :', bgc=[0,0.5,0])
 cmds.textFieldGrp('prefix', editable=True)
-cmds.button(label="APPLY", bgc=[0,0,0], command = lambda x : setPrefix(listSelection()))
+cmds.button(label="APPLY", bgc=[0,0,0], command = lambda x : setPrefix(setObjectType()))
 
 
 cmds.text(label='SUFFIX :', bgc=[0.5,0,0])
 cmds.textFieldGrp('suffix', editable=True)
-cmds.button(label="APPLY", bgc=[0,0,0], command = lambda x : setSuffix(listSelection()))
+cmds.button(label="APPLY", bgc=[0,0,0], command = lambda x : setSuffix(setObjectType()))
 
 
 cmds.text(label='DATE FORMAT :', bgc=[1,1,1])
 make_optmenu('optDate', '', ['none','date', 'date & time'])
-cmds.button(label='APPLY', bgc=[0,0,0], command = lambda x : setDateFormat(listSelection()))
+cmds.button(label='APPLY', bgc=[0,0,0], command = lambda x : setDateFormat(setObjectType()))
 
 cmds.separator(height=10, style='double')
 cmds.button(label='VALIDATE', bgc=[1,0,0], command = 'validate()')
